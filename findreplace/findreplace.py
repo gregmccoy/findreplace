@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re
 import sys
@@ -10,6 +10,7 @@ parser.add_argument("old", help="String to find")
 parser.add_argument("new", help="String to replace old with")
 parser.add_argument("folder", help="Location to recursively search in")
 parser.add_argument("--ignore", dest='ignore', help="Regex for what the character before and after the replace can be")
+parser.add_argument("--code", action='store_true', dest='code', help="Blank regex, for match items in code")
 args = parser.parse_args()
 
 def main(args):
@@ -18,7 +19,11 @@ def main(args):
         ignore = args.ignore
     oldstr = args.old
     newstr = args.new
-    regex = ignore + oldstr + "({}|[s])".format(ignore)
+    if not args.code:
+        regex = ignore + oldstr + "({}|[s])".format(ignore)
+    else:
+        regex = "[^a-z]" + oldstr + "[^a-z]"
+
     for dirpath, dirnames, filenames in os.walk(args.folder):
         for fname in filenames:
             fullname = os.path.join(dirpath, fname)
@@ -35,6 +40,7 @@ def file_match(fname, pattern, old, new):
         with open(fname, "rt", errors='ignore') as f:
             data = f.readlines()
     except Exception as e:
+        print("Error opening file\n {}".format(e))
         return -1
 
     for i, line in enumerate(data):
