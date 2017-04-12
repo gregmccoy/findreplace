@@ -10,7 +10,7 @@ parser.add_argument("old", help="String to find")
 parser.add_argument("new", help="String to replace old with")
 parser.add_argument("folder", help="Location to recursively search in")
 parser.add_argument("--ignore", dest='ignore', help="Regex for what the character before and after the replace can be")
-parser.add_argument("--code", action='store_true', dest='code', help="Blank regex, for match items in code")
+parser.add_argument("--text", action='store_true', dest='text', help="Regex to match plain text outside of code")
 args = parser.parse_args()
 
 def main(args):
@@ -19,15 +19,16 @@ def main(args):
         ignore = args.ignore
     oldstr = args.old
     newstr = args.new
-    if not args.code:
-        regex = ignore + oldstr + "({}|[s])".format(ignore)
-    else:
+    if not args.text:
         regex = "[^a-z]" + oldstr + "[^a-z]"
+    else:
+        regex = ignore + oldstr + "({}|[s])".format(ignore)
 
     for dirpath, dirnames, filenames in os.walk(args.folder):
         for fname in filenames:
             fullname = os.path.join(dirpath, fname)
-            file_match(fullname, regex, oldstr, newstr)
+            if "/.git/" not in dirpath and not os.path.islink(fullname):
+                file_match(fullname, regex, oldstr, newstr)
     print(regex)
     re.search(regex, "")
 
