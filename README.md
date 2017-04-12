@@ -1,8 +1,8 @@
 # findreplace
-Replace only plain text within HTML by checking the character before and after the search term
+Quick find and replace script for replace items in code or plain text
 
 ```
-usage: findreplace.py [-h] [--ignore IGNORE] old new folder
+usage: findreplace [-h] [--ignore IGNORE] [--text] old new folder
 
 positional arguments:
   old              String to find
@@ -13,4 +13,5 @@ optional arguments:
   -h, --help       show this help message and exit
   --ignore IGNORE  Regex for what the character before and after the replace
                    can be
+  --text           Regex to match plain text outside of cod
 ```
